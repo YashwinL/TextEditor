@@ -1,6 +1,8 @@
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.print.PrinterException;
+import java.io.*;
 
 public class TextEditor implements ActionListener {
 
@@ -76,6 +78,58 @@ public class TextEditor implements ActionListener {
             TextArea.paste();
         }else if(call=="Close"){
             frame.setVisible(false);
+        }else if(call=="Save File"){
+            JFileChooser jFileChooser = new JFileChooser("C:");
+            int ans =jFileChooser.showOpenDialog(null);
+            if(ans==jFileChooser.APPROVE_OPTION){
+                File file = new File(jFileChooser.getSelectedFile().getAbsolutePath());
+                BufferedWriter writter = null;
+                try {
+                    writter = new BufferedWriter(new FileWriter(file,false));
+                } catch (IOException ex) {
+                    ex.printStackTrace();
+                }
+                try {
+                    writter.write(TextArea.getText());
+                } catch (IOException ex) {
+                    ex.printStackTrace();
+                }
+                try {
+                    writter.flush();
+                } catch (IOException ex) {
+                    ex.printStackTrace();
+                }
+                try {
+                    writter.close();
+                } catch (IOException ex) {
+                    ex.printStackTrace();
+                }
+            }
+        }else if(call=="Open File"){
+            JFileChooser jFileChooser1 = new JFileChooser("C:");
+            int ans = jFileChooser1.showOpenDialog(null);
+            if(ans==JFileChooser.APPROVE_OPTION){
+                File file =new File(jFileChooser1.getSelectedFile().getAbsolutePath());
+
+                try {
+                    String s1 ="",s2="";
+                    BufferedReader bufferedReader = new BufferedReader(new FileReader(file));
+                    s2=bufferedReader.readLine();
+                    while((s1=bufferedReader.readLine())!=null){
+                        s2+=s1+"\n";
+                    }
+                    TextArea.setText(s2);
+                } catch (IOException ex) {
+                    ex.printStackTrace();
+                }
+            }
+
+        }else if(call=="Print File"){
+            try {
+                TextArea.print();
+            } catch (PrinterException ex) {
+                ex.printStackTrace();
+            }
         }
     }
 }
